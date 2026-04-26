@@ -1,0 +1,16 @@
+[providers]
+node = {}
+python = {}
+
+[phases.setup]
+nixPkgs = ['...', 'nodejs', 'python311', 'ffmpeg']
+
+[phases.install]
+cmds = [
+    'npm install',
+    'cd node && npm install',
+    'cd python && python -m venv /opt/venv && . /opt/venv/bin/activate && pip install -r requirements.txt'
+]
+
+[start]
+cmd = '. /opt/venv/bin/activate && bash start.sh'
