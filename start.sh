@@ -31,8 +31,8 @@ cd python
 if [ -d "venv" ]; then
     source venv/bin/activate
 fi
-# Run with python3 and capture errors
-python3 -m uvicorn app.main:app --host 0.0.0.0 --port ${API_PORT} 2>&1 &
+# Run with python and capture errors
+python -m uvicorn app.main:app --host 0.0.0.0 --port ${API_PORT} 2>&1 &
 PYTHON_PID=$!
 cd ..
 
