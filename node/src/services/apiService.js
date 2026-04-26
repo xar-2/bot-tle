@@ -14,7 +14,7 @@ const apiService = {
       const res = await api.get("/ping");
       return res.data;
     } catch (err) {
-      console.error("API Ping Error:", err.message);
+      console.error("API Ping Error:", err.message || err);
       return null;
     }
   },
