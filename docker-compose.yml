@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  python_engine:
+    build: 
+      context: ./python
+      dockerfile: ../docker/Python.Dockerfile
+    volumes:
+      - ./python:/app
+      - ./downloads:/app/downloads
+    env_file: .env
+    ports:
+      - "8000:8000"
+
+  node_bot:
+    build:
+      context: ./node
+      dockerfile: ../docker/Node.Dockerfile
+    volumes:
+      - ./node:/app
+      - ./database:/app/database
+    env_file: .env
+    depends_on:
+      - python_engine
+    environment:
+      - PYTHON_API_URL=http://python_engine:8000
