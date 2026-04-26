@@ -8,11 +8,7 @@ GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 NC='\033[0m'
 
-# Check if .env exists
-if [ ! -f .env ]; then
-    echo "❌ .env file not found! Please create one based on .env.example"
-    exit 1
-fi
+# Environment variables will be injected by Railway automatically
 
 # Function to stop services
 cleanup() {
