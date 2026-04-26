@@ -73,7 +73,7 @@ const adminHandler = {
   },
 
   handleBackup: async (bot, msg) => {
-    const dbPath = path.resolve(__dirname, "../../../database/bot.db");
+    const dbPath = path.resolve(__dirname, "../../database/bot.db");
     if (fs.existsSync(dbPath)) {
       await bot.sendDocument(msg.chat.id, dbPath, { caption: "💾 *Backup Database Bot-tle*", parse_mode: "Markdown" });
     } else {

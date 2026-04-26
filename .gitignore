@@ -15,8 +15,8 @@ __pycache__/
 cookies.txt
 
 # Database
-database/*.db
-database/*.db-journal
+node/database/*.db
+node/database/*.db-journal
 
 # Logs
 logs/*.log

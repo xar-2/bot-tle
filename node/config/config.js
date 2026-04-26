@@ -11,6 +11,6 @@ module.exports = {
     internalToken: process.env.INTERNAL_API_TOKEN || "bot-tle-secret-key-123"
   },
   db: {
-    path: "../../database/bot.db"
+    path: "../database/bot.db"
   }
 };
