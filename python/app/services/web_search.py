@@ -1,4 +1,12 @@
-from ddgs import DDGS
+try:
+    from duckduckgo_search import DDGS
+except ImportError:
+    # Fallback jika library belum terinstall
+    class DDGS:
+        def __enter__(self): return self
+        def __exit__(self, *args): pass
+        def text(self, *args, **kwargs): return []
+
 from typing import List, Dict
 
 class WebSearch:
@@ -11,10 +19,13 @@ class WebSearch:
 
         try:
             results = []
-            # Gunakan DDGS untuk mencari di internet dengan region Indonesia
+            # Gunakan DDGS untuk mencari di internet
             with DDGS() as ddgs:
-                for r in ddgs.text(query, region='id-id', safesearch='moderate', timelimit=None, max_results=max_results):
+                ddgs_gen = ddgs.text(query, region='id-id', safesearch='moderate', timelimit=None)
+                for r in ddgs_gen:
                     results.append(r)
+                    if len(results) >= max_results:
+                        break
             
             if not results:
                 return f"🔍 Tidak ditemukan hasil untuk: '{query}'"
@@ -33,6 +44,8 @@ class WebSearch:
             return response_text
         except Exception as e:
             print(f"Web Search Error: {e}")
+            if "ratelimit" in str(e).lower():
+                return "❌ Maaf, terlalu banyak permintaan ke mesin pencari. Silakan coba lagi nanti."
             return f"❌ Maaf, terjadi kesalahan saat melakukan pencarian: {str(e)}"
 
 web_search_engine = WebSearch()
