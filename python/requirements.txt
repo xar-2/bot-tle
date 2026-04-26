@@ -5,5 +5,4 @@ python-multipart>=0.0.9
 pydantic>=2.9.0
 python-dotenv>=1.0.1
 aiofiles>=23.2.1
-ddgs>=9.14.1
-duckduckgo-search>=5.0.0
+duckduckgo-search>=6.2.0
