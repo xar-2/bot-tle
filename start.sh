@@ -17,16 +17,23 @@ fi
 # Function to stop services
 cleanup() {
     echo -e "\n🛑 Stopping services..."
-    kill $PYTHON_PID $NODE_PID
+    kill $PYTHON_PID $NODE_PID 2>/dev/null
+    fuser -k 8000/tcp 2>/dev/null
     exit
 }
 
 trap cleanup SIGINT SIGTERM
 
+# Kill any existing process on port 8000
+fuser -k 8000/tcp 2>/dev/null || true
+
 # Start Python API
 echo -e "${BLUE}[Python]${NC} Starting AI Engine..."
-cd python && source venv/bin/activate 2>/dev/null || echo "No venv found, using system python"
-python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload &
+cd python
+if [ -d "venv" ]; then
+    source venv/bin/activate
+fi
+python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 &
 PYTHON_PID=$!
 cd ..
 

@@ -25,7 +25,7 @@ const apiService = {
       return res.data.response;
     } catch (err) {
       console.error("Web Search API Error:", err.message);
-      throw new Error("Gagal menghubungi mesin pencari.");
+      throw new Error(`Gagal menghubungi mesin pencari: ${err.message}`);
     }
   },
 
@@ -35,7 +35,7 @@ const apiService = {
       return res.data;
     } catch (err) {
       console.error("Download Info Error:", err.message);
-      throw new Error("Gagal mengambil informasi media.");
+      throw new Error(`Gagal mengambil informasi media: ${err.message}`);
     }
   },
 
@@ -45,7 +45,7 @@ const apiService = {
       return res.data;
     } catch (err) {
       console.error("Download Execute Error:", err.message);
-      throw new Error("Gagal memproses download.");
+      throw new Error(`Gagal memproses download: ${err.message}`);
     }
   },
 
