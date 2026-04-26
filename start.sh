@@ -28,18 +28,7 @@ API_PORT=${PORT:-8000}
 echo -e "${BLUE}[Python]${NC} Starting AI Engine on port ${API_PORT}..."
 
 cd python
-# Inisialisasi venv jika belum ada (safety)
-if [ ! -d "venv" ]; then
-    echo "[Python] Creating virtual environment..."
-    python -m venv venv
-fi
-
-# Pastikan library terinstall (safety)
-echo "[Python] Installing/Verifying dependencies..."
-./venv/bin/python -m pip install -r requirements.txt > /dev/null 2>&1
-
-# Jalankan dengan path absolut ke venv
-echo "[Python] Launching Uvicorn..."
+# Gunakan venv yang sudah dibuat saat build
 ./venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port ${API_PORT} 2>&1 &
 PYTHON_PID=$!
 cd ..
