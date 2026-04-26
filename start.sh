@@ -48,7 +48,7 @@ sleep 5
 # Start Node.js Bot
 echo -e "${GREEN}[Node]${NC} Starting Telegram Bot..."
 cd node
-export PYTHON_API_URL="http://localhost:${API_PORT}"
+export PYTHON_API_URL="http://127.0.0.1:${API_PORT}"
 npm start &
 NODE_PID=$!
 cd ..

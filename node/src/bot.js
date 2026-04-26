@@ -6,20 +6,25 @@ const downloadHandler = require("./handlers/downloadHandler");
 const adminHandler = require("./handlers/adminHandler");
 const chalk = require("chalk");
 
-// Initialize Bot
-const bot = new TelegramBot(config.bot.token, { polling: true });
+const apiService = require("./services/apiService");
 
-console.log(chalk.green("🤖 Bot-tle is running..."));
+console.log(chalk.yellow("⏳ Menunggu Mesin Python (AI & Downloader) siap..."));
 
-// Anti-Spam Tracking
-const userCooldowns = new Map();
-const COOLDOWN_TIME = 2000; // 2 detik jeda antar pesan
+const startBot = () => {
+  // Initialize Bot only after Python is ready
+  const bot = new TelegramBot(config.bot.token, { polling: true });
+  
+  console.log(chalk.green("🤖 Bot-tle is running..."));
 
-// Helper: Check URL
-const isURL = (text) => /https?:\/\/[^\s]+/.test(text);
+  // Anti-Spam Tracking
+  const userCooldowns = new Map();
+  const COOLDOWN_TIME = 2000; // 2 detik jeda antar pesan
 
-// ─── Command: /start ──────────────────────────────────────────
-bot.onText(/\/start/, (msg) => {
+  // Helper: Check URL
+  const isURL = (text) => /https?:\/\/[^\s]+/.test(text);
+
+  // ─── Command: /start ──────────────────────────────────────────
+  bot.onText(/\/start/, (msg) => {
   const name = msg.chat.first_name || "User";
   dbService.trackUser(msg.from.id, msg.from.username);
   
@@ -167,6 +172,30 @@ bot.on("message", (msg) => {
   }
 });
 
-// ─── Error Handling ───────────────────────────────────────────
-bot.on("polling_error", (err) => console.error(chalk.red("Polling Error:"), err.message));
+  // ─── Error Handling ───────────────────────────────────────────
+  bot.on("polling_error", (err) => console.error(chalk.red("Polling Error:"), err.message));
+};
+
+// Polling until Python API is ready
+const checkPythonAPI = async () => {
+  let attempts = 0;
+  const maxAttempts = 30; // Tunggu maksimal 60 detik (30 * 2 detik)
+  
+  const interval = setInterval(async () => {
+    attempts++;
+    const status = await apiService.ping();
+    if (status && status.status === "ok") {
+      clearInterval(interval);
+      console.log(chalk.green("✅ Mesin Python terhubung!"));
+      startBot();
+    } else if (attempts >= maxAttempts) {
+      clearInterval(interval);
+      console.error(chalk.red("❌ Gagal terhubung ke Mesin Python setelah 60 detik. Memulai bot dengan fitur terbatas..."));
+      startBot();
+    }
+  }, 2000);
+};
+
+checkPythonAPI();
+
 process.on("unhandledRejection", (reason) => console.error(chalk.red("Unhandled Rejection:"), reason));
