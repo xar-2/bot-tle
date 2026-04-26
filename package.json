@@ -1,5 +1,10 @@
 {
+  "name": "bot-tle-hybrid",
+  "version": "2.0.0",
+  "scripts": {
+    "start": "bash start.sh"
+  },
   "dependencies": {
-    "better-sqlite3": "^12.9.0"
+    "better-sqlite3": "^11.0.0"
   }
 }

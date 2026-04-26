@@ -27,23 +27,26 @@ trap cleanup SIGINT SIGTERM
 # Kill any existing process on port 8000
 fuser -k 8000/tcp 2>/dev/null || true
 
-# Start Python API
-echo -e "${BLUE}[Python]${NC} Starting AI Engine..."
+# Use Railway's PORT or fallback to 8000
+API_PORT=${PORT:-8000}
+echo -e "${BLUE}[Python]${NC} Starting AI Engine on port ${API_PORT}..."
+
 cd python
 if [ -d "venv" ]; then
     source venv/bin/activate
 fi
-python3 -m uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+python3 -m uvicorn app.main:app --host 0.0.0.0 --port ${API_PORT} &
 PYTHON_PID=$!
 cd ..
 
 # Wait for Python API to be ready
 echo "Waiting for AI Engine to initialize..."
-sleep 3
+sleep 5
 
 # Start Node.js Bot
 echo -e "${GREEN}[Node]${NC} Starting Telegram Bot..."
 cd node
+export PYTHON_API_URL="http://localhost:${API_PORT}"
 npm start &
 NODE_PID=$!
 cd ..
