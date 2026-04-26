@@ -28,14 +28,19 @@ API_PORT=${PORT:-8000}
 echo -e "${BLUE}[Python]${NC} Starting AI Engine on port ${API_PORT}..."
 
 cd python
-# Gunakan venv yang sudah dibuat saat build
-./venv/bin/python -m uvicorn app.main:app --host 0.0.0.0 --port ${API_PORT} 2>&1 &
+echo "[Python] Checking environment..."
+ls -d venv || echo "❌ venv directory NOT FOUND!"
+./venv/bin/python --version || echo "❌ python binary NOT FOUND or NOT EXECUTABLE!"
+
+# Jalankan dengan host 127.0.0.1 (internal)
+echo "[Python] Launching AI Engine on 127.0.0.1:${API_PORT}..."
+./venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port ${API_PORT} 2>&1 &
 PYTHON_PID=$!
 cd ..
 
 # Wait for Python API to be ready
 echo "Waiting for AI Engine to initialize..."
-sleep 5
+sleep 10
 
 # Start Node.js Bot
 echo -e "${GREEN}[Node]${NC} Starting Telegram Bot..."
