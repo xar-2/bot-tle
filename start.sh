@@ -29,8 +29,8 @@ echo -e "${BLUE}[Python]${NC} Starting AI Engine on port ${API_PORT}..."
 
 cd python
 # Jalankan uvicorn langsung (tanpa venv karena sudah diinstall di sistem)
-echo "[Python] Launching AI Engine on 127.0.0.1:${API_PORT}..."
-python -m uvicorn app.main:app --host 127.0.0.1 --port ${API_PORT} 2>&1 &
+echo "[Python] Launching AI Engine on 0.0.0.0:${API_PORT}..."
+python -m uvicorn app.main:app --host 0.0.0.0 --port ${API_PORT} 2>&1 &
 PYTHON_PID=$!
 cd ..
 

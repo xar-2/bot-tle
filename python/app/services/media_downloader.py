@@ -35,10 +35,7 @@ class MediaDownloader:
             'addmetadata': True,
         }
         
-        # Hindari penggunaan cookies untuk YouTube karena sering menyebabkan akun ditandai bot (format not available)
-        is_youtube = url and ('youtube.com' in url or 'youtu.be' in url or 'ytsearch' in url)
-        
-        if self.cookie_file and not is_youtube:
+        if self.cookie_file:
             opts['cookiefile'] = self.cookie_file
         
         if self.proxy:
