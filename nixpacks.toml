@@ -3,12 +3,12 @@ node = {}
 python = {}
 
 [phases.setup]
-nixPkgs = ['...', 'nodejs', 'python311', 'ffmpeg']
+nixPkgs = ['nodejs', 'python3', 'ffmpeg', 'psmisc']
 
 [phases.install]
 cmds = [
     'npm install',
-    'pip install -r python/requirements.txt'
+    'python3 -m pip install -r python/requirements.txt'
 ]
 
 [start]
