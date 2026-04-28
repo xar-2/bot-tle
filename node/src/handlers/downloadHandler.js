@@ -112,16 +112,17 @@ const downloadHandler = {
       
       dbService.incrementStat(userId, "downloads");
 
-      // Adjust path because Python saves in its own folder
-      // Working directory is 'node', so we go up and then into python
-      const relativePath = `../python/${result.file_path}`;
-      filePathToDelete = path.resolve(process.cwd(), relativePath);
-      console.log(`[Debug] Target file for cleanup: ${filePathToDelete}`);
+      // Logic for hybrid: if file_path is returned, construct the URL
+      // filename is the last part of the path
+      const filename = path.basename(result.file_path);
+      const fileUrl = `${config.api.pythonUrl}/files/${filename}`;
+      
+      console.log(`[Debug] Sending file from: ${fileUrl}`);
 
       if (type === "mp3") {
-        await bot.sendAudio(chatId, relativePath, { caption: `✅ ${result.title}` });
+        await bot.sendAudio(chatId, fileUrl, { caption: `✅ ${result.title}` });
       } else {
-        await bot.sendVideo(chatId, relativePath, { caption: `✅ ${result.title}` });
+        await bot.sendVideo(chatId, fileUrl, { caption: `✅ ${result.title}` });
       }
       
       await bot.deleteMessage(chatId, statusMsg.message_id);
@@ -133,15 +134,8 @@ const downloadHandler = {
         parse_mode: "Markdown"
       });
     } finally {
-      // Cleanup: Delete file from server after sending
-      if (filePathToDelete && fs.existsSync(filePathToDelete)) {
-        try {
-          fs.unlinkSync(filePathToDelete);
-          console.log(`[Cleanup] Deleted: ${filePathToDelete}`);
-        } catch (unlinkErr) {
-          console.error(`[Cleanup] Error deleting ${filePathToDelete}:`, unlinkErr.message);
-        }
-      }
+      // Note: Cleanup is now handled by Python or periodic task
+      // In two-hosting setup, Node cannot delete Python's files directly
     }
   },
 

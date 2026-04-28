@@ -1,4 +1,6 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException, Query, BackgroundTasks
+import asyncio
+import os
 from pydantic import BaseModel
 from ..services.media_downloader import media_downloader
 
@@ -18,10 +20,22 @@ async def get_info(url: str = Query(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+async def cleanup_file(file_path: str, delay: int = 300):
+    await asyncio.sleep(delay)
+    if os.path.exists(file_path):
+        try:
+            os.remove(file_path)
+            print(f"🗑 Background cleanup: Deleted {file_path}")
+        except Exception as e:
+            print(f"❌ Error during cleanup: {e}")
+
 @router.post("/execute")
-async def execute_download(req: DownloadRequest):
+async def execute_download(req: DownloadRequest, background_tasks: BackgroundTasks):
     try:
         result = await media_downloader.download(req.url, req.type, req.quality, req.user_id)
+        # Add cleanup task (delete after 5 minutes)
+        if "file_path" in result:
+            background_tasks.add_task(cleanup_file, result["file_path"])
         return result
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

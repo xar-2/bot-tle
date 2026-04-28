@@ -1,8 +1,9 @@
 const Database = require("better-sqlite3");
 const path = require("path");
 const fs = require("fs");
+const config = require("../config/config");
 
-const dbPath = path.resolve(__dirname, "bot.db");
+const dbPath = config.db.path;
 
 // Ensure directory exists
 const dbDir = path.dirname(dbPath);
