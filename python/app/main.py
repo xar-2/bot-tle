@@ -33,6 +33,3 @@ app.mount("/files", StaticFiles(directory="downloads"), name="downloads")
 async def ping():
     return {"status": "ok", "message": "Bot-tle Engine is running"}
 
-if __name__ == "__main__":
-    port = int(os.getenv("PORT"))
-    uvicorn.run(app, host="0.0.0.0", port=port)
