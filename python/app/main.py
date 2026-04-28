@@ -29,6 +29,15 @@ if not os.path.exists("downloads"):
     os.makedirs("downloads")
 app.mount("/files", StaticFiles(directory="downloads"), name="downloads")
 
+@app.get("/")
+async def root():
+    return {
+        "status": "online",
+        "service": "Bot-tle Engine",
+        "version": "2.0.0",
+        "docs": "/docs"
+    }
+
 @app.get("/ping")
 async def ping():
     return {"status": "ok", "message": "Bot-tle Engine is running"}
