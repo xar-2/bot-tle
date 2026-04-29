@@ -90,6 +90,14 @@ class MediaDownloader:
         # Tambahkan restrictfilenames agar karakter aneh/emoji dihapus dari nama file
         ydl_opts['restrictfilenames'] = True
 
+        # Optimasi opsi untuk stabilitas
+        ydl_opts.update({
+            'retries': 10,
+            'fragment_retries': 10,
+            'retry_sleep_functions': {'http': lambda n: 5},
+            'buffersize': 1024 * 256,
+        })
+
         if type == 'mp3':
             ydl_opts.update({
                 'format': 'bestaudio/best',
@@ -101,11 +109,14 @@ class MediaDownloader:
                 }],
             })
         else:
+            # Gunakan format yang lebih ringan & kompatibel (MP4) untuk menghindari transcoding berat
             ydl_opts.update({
-                'format': 'bestvideo+bestaudio/best/best',
+                'format': 'bestvideo[height<=1080][ext=mp4]+bestaudio[ext=m4a]/best[height<=1080][ext=mp4]/best',
                 'outtmpl': outtmpl,
                 'merge_output_format': 'mp4',
             })
+
+        print(f"🚀 Starting download: {url} (Type: {type}, User: {user_id})")
 
         try:
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
