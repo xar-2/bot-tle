@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends, HTTPException, Security
 from fastapi.security import APIKeyHeader
 from fastapi.staticfiles import StaticFiles
 from .routes import search_routes, download_routes
+from .routes import ai  # tambahkan jika ada ai router
 import os
 import uvicorn
 from dotenv import load_dotenv
@@ -22,9 +23,9 @@ async def verify_api_key(key: str = Security(api_key_header)):
 # Routes
 app.include_router(search_routes.router, dependencies=[Depends(verify_api_key)])
 app.include_router(download_routes.router, dependencies=[Depends(verify_api_key)])
+app.include_router(ai.router, dependencies=[Depends(verify_api_key)])
 
-# Serve downloads (protected by middleware or just use random names)
-# For now, mount it directly
+# Serve downloaded files via /files/ endpoint
 if not os.path.exists("downloads"):
     os.makedirs("downloads")
 app.mount("/files", StaticFiles(directory="downloads"), name="downloads")
@@ -41,4 +42,3 @@ async def root():
 @app.get("/ping")
 async def ping():
     return {"status": "ok", "message": "Bot-tle Engine is running"}
-
