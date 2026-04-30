@@ -27,24 +27,52 @@ const startBot = () => {
 
   // ─── Command: /start ──────────────────────────────────────────
   bot.onText(/\/start/, (msg) => {
-  const name = msg.chat.first_name || "User";
   dbService.trackUser(msg.from.id, msg.from.username);
   
-  const welcome = `👋 Halo *${name}*!\n\n` +
-                  `Saya adalah *Bot-tle*, asisten multifungsi kamu.\n\n` +
-                  `🔍 *Web Search*: Ketik kata kunci untuk mencari di internet.\n` +
-                  `📸 *Screenshot*: Ketik \`/ss [url]\` untuk foto website.\n` +
-                  `🖼 *QR Generator*: Ketik \`/qr [teks/link]\`.\n` +
-                  `📥 *Downloader*: Kirim link YouTube/Instagram/TikTok.\n\n` +
-                  `Gunakan /help untuk bantuan lebih lanjut.`;
+  const welcome = `👋 *Selamat Datang di Bot-tle!*\n\n` +
+                  `🚀 *Visi & Misi:*\n` +
+                  `Menjadi asisten digital pendamping aktivitas harianmu yang cepat, simpel, dan serbaguna dalam mengolah media serta informasi.\n\n` +
+                  `📖 *Cara Menggunakan Bot:*\n` +
+                  `1️⃣ **Pencarian**: Cukup ketik apa saja, saya akan mencarinya di internet.\n` +
+                  `2️⃣ **Download**: Kirim link (YouTube, IG, TikTok) untuk mendownload video/lagu.\n` +
+                  `3️⃣ **Screenshot**: Ketik \`/ss [link]\` untuk memotret website.\n` +
+                  `4️⃣ **QR Code**: Ketik \`/qr [teks/link]\` untuk membuat barcode.\n\n` +
+                  `Silakan pilih menu di bawah atau langsung kirim pesan!`;
   
   bot.sendMessage(msg.chat.id, welcome, { 
     parse_mode: "Markdown",
     reply_markup: {
+      inline_keyboard: [[{ text: "👨‍💻 Hubungi Admin", callback_data: "contact_admin" }]],
       keyboard: [["📊 Stats", "❓ Help"], ["🔍 Cari di Web", "📥 Download"]],
       resize_keyboard: true
     }
   });
+});
+
+bot.onText(/\/report\s*(.*)/, (msg, match) => {
+  const userId = msg.from.id;
+  const text = match[1];
+  
+  if (!text) {
+    return bot.sendMessage(msg.chat.id, "❌ Silakan masukkan pesan! Contoh: `/report Ada kendala download`", { parse_mode: "Markdown" });
+  }
+
+  // Kirim ke semua Admin
+  config.bot.adminIds.forEach(adminId => {
+    bot.sendMessage(adminId, `📨 *PESAN BARU DARI USER*\n\n👤 Dari: ${msg.from.first_name}\n🆔 ID: \`${userId}\`\n💬 Pesan: ${text}\n\n_Gunakan /reply ${userId} [pesan] untuk membalas_`, { parse_mode: "Markdown" });
+  });
+
+  bot.sendMessage(msg.chat.id, "✅ *Pesan telah dikirim ke Admin.* Mohon tunggu balasan ya!", { parse_mode: "Markdown" });
+});
+
+bot.onText(/\/reply\s+(\d+)\s+(.*)/, (msg, match) => {
+  if (!config.bot.adminIds.includes(msg.from.id)) return;
+  
+  const targetId = match[1];
+  const replyText = match[2];
+
+  bot.sendMessage(targetId, `📩 *PESAN DARI ADMIN:*\n\n${replyText}`, { parse_mode: "Markdown" });
+  bot.sendMessage(msg.chat.id, `✅ Balasan terkirim ke \`${targetId}\``);
 });
 
 // ─── Command: /help ───────────────────────────────────────────
@@ -150,6 +178,9 @@ bot.on("callback_query", (query) => {
       bot.answerCallbackQuery(query.id);
       bot.sendMessage(query.message.chat.id, "📢 *Mode Broadcast*\n\nSilakan ketik perintah `/broadcast [pesan]` untuk mulai mengirim pesan.", { parse_mode: "Markdown" });
     }
+  } else if (query.data === "contact_admin") {
+    bot.answerCallbackQuery(query.id);
+    bot.sendMessage(query.message.chat.id, "👨‍💻 *Hubungi Admin*\n\nSilakan gunakan perintah:\n`/report [pesan kamu]`\n\nContoh: `/report Halo admin, saya ada kendala download`", { parse_mode: "Markdown" });
   }
 });
 
