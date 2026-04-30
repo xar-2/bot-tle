@@ -5,6 +5,7 @@ const searchHandler = require("./handlers/searchHandler");
 const downloadHandler = require("./handlers/downloadHandler");
 const adminHandler = require("./handlers/adminHandler");
 const screenshotHandler = require("./handlers/screenshotHandler");
+const qrHandler = require("./handlers/qrHandler");
 const chalk = require("chalk");
 
 const apiService = require("./services/apiService");
@@ -33,6 +34,7 @@ const startBot = () => {
                   `Saya adalah *Bot-tle*, asisten multifungsi kamu.\n\n` +
                   `🔍 *Web Search*: Ketik kata kunci untuk mencari di internet.\n` +
                   `📸 *Screenshot*: Ketik \`/ss [url]\` untuk foto website.\n` +
+                  `🖼 *QR Generator*: Ketik \`/qr [teks/link]\`.\n` +
                   `📥 *Downloader*: Kirim link YouTube/Instagram/TikTok.\n\n` +
                   `Gunakan /help untuk bantuan lebih lanjut.`;
   
@@ -50,6 +52,7 @@ bot.onText(/\/help|❓ Help/, (msg) => {
   const help = `📖 *Panduan Bot-tle*\n\n` +
                `• *Web Search*: Cukup ketik kata kunci yang ingin dicari.\n` +
                `• *Screenshot*: \`/ss link-website\`.\n` +
+               `• *QR Code*: \`/qr teks atau link\`.\n` +
                `• *Download*: Paste link video/foto dari sosmed.\n` +
                `• /reset: Hapus riwayat pencarian kamu.\n` +
                `• /stats: Lihat statistik penggunaan kamu.\n\n` +
@@ -77,6 +80,10 @@ bot.onText(/\/stats|📊 Stats/, (msg) => {
 
 bot.onText(/\/ss\s*(.*)/, (msg, match) => {
   screenshotHandler.handle(bot, msg, match[1]);
+});
+
+bot.onText(/\/qr\s*(.*)/, (msg, match) => {
+  qrHandler.handle(bot, msg, match[1]);
 });
 
 // ─── Admin Commands ───────────────────────────────────────────

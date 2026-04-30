@@ -25,11 +25,11 @@ class ScreenshotService:
             
             try:
                 print(f"📸 Taking screenshot of: {url}")
-                await page.goto(url, wait_until="networkidle")
-                # Beri jeda sedikit agar animasi web selesai
-                await asyncio.sleep(2)
+                await page.goto(url, wait_until="load", timeout=20000)
+                # Beri jeda 1 detik untuk render akhir
+                await asyncio.sleep(1)
             except Exception as e:
-                print(f"⚠️ Screenshot warning (proceeding anyway): {e}")
+                print(f"⚠️ Screenshot warning: {e}")
             
             filename = f"ss_{uuid.uuid4().hex}.png"
             file_path = os.path.join(self.output_dir, filename)

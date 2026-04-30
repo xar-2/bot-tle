@@ -79,6 +79,17 @@ const apiService = {
       const detail = err.response?.data?.detail || err.message;
       throw new Error(detail);
     }
+  },
+
+  generateQR: async (data) => {
+    try {
+      const res = await api.get("/qr/generate", { params: { data } });
+      return res.data;
+    } catch (err) {
+      console.error("QR API Error:", err.message);
+      const detail = err.response?.data?.detail || err.message;
+      throw new Error(detail);
+    }
   }
 };
 
