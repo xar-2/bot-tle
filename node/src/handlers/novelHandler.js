@@ -89,13 +89,21 @@ const novelHandler = {
     try {
       const result = await apiService.readNovel(url);
       
-      const text = `📖 *${result.title}*\n` +
-                   `────────────────────\n\n` +
-                   `${result.content}\n\n` +
-                   `────────────────────\n` +
-                   `_Konten diekstrak otomatis oleh Bot-tle_`;
+      // Kirim judul dan pemisah menggunakan Markdown
+      await bot.sendMessage(chatId, `📖 *${result.title}*\n────────────────────`, { parse_mode: "Markdown" });
+      
+      // Kirim konten teks novel tanpa Markdown (plain text) agar aman dari karakter spesial
+      const chunks = [];
+      const rawContent = result.content;
+      const chunkSize = 3900; // Ukuran aman per pesan Telegram
+      for (let i = 0; i < rawContent.length; i += chunkSize) {
+        chunks.push(rawContent.slice(i, i + chunkSize));
+      }
+      for (const chunk of chunks) {
+        await bot.sendMessage(chatId, chunk);
+      }
 
-      await bot.sendMessage(chatId, text, { parse_mode: "Markdown" });
+      await bot.sendMessage(chatId, `────────────────────\n_Konten diekstrak otomatis oleh Bot\-tle_`, { parse_mode: "MarkdownV2" });
       await bot.deleteMessage(chatId, statusMsg.message_id);
     } catch (err) {
       console.error("Read Novel Error:", err.message);

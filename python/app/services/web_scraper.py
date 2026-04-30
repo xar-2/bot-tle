@@ -13,7 +13,9 @@ except ImportError:
 
 class WebScraperService:
     def __init__(self):
-        self.cookie_file = "cookies.json" # Gunakan file JSON khusus cookies web
+        # Gunakan path absolut agar tidak error saat dijalankan dari direktori berbeda
+        base_dir = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        self.cookie_file = os.path.join(base_dir, "cookies.json")
 
     async def extract_novel_text(self, url: str) -> dict:
         async with async_playwright() as p:

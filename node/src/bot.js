@@ -32,24 +32,31 @@ const startBot = () => {
   bot.onText(/\/start/, (msg) => {
   dbService.trackUser(msg.from.id, msg.from.username);
   
-  const welcome = `👋 *Selamat Datang di Bot-tle!*\n\n` +
+  const welcome = `👋 *Selamat Datang di Bot\-tle\!*\n\n` +
                   `🚀 *Visi & Misi:*\n` +
-                  `Menjadi asisten digital pendamping aktivitas harianmu yang cepat, simpel, dan serbaguna dalam mengolah media serta informasi.\n\n` +
+                  `Menjadi asisten digital pendamping harianmu yang cepat, simpel, dan serbaguna\.\n\n` +
                   `📖 *Cara Menggunakan Bot:*\n` +
-                  `1️⃣ **Pencarian**: Cukup ketik apa saja, saya akan mencarinya di internet.\n` +
-                  `2️⃣ **Download**: Kirim link (YouTube, IG, TikTok) untuk mendownload video/lagu.\n` +
-                  `3️⃣ **Screenshot**: Ketik \`/ss [link]\` untuk memotret website.\n` +
-                  `4️⃣ **QR Code**: Ketik \`/qr [teks/link]\` untuk membuat barcode.\n` +
-                  `5️⃣ **Manga**: Ketik \`/manga [judul]\` untuk info manga.\n` +
-                  `6️⃣ **Novel**: Ketik \`/novel [judul]\` untuk info & baca novel.\n\n` +
-                  `Silakan pilih menu di bawah atau langsung kirim pesan!`;
+                  `1️⃣ *Pencarian* \- Ketik apa saja untuk cari di internet\.\n` +
+                  `2️⃣ *Download* \- Kirim link YouTube/IG/TikTok\.\n` +
+                  `3️⃣ *Screenshot* \- /ss \[link\] untuk foto website\.\n` +
+                  `4️⃣ *QR Code* \- /qr \[teks/link\] untuk barcode\.\n` +
+                  `5️⃣ *Manga* \- /manga \[judul\] untuk info manga\.\n` +
+                  `6️⃣ *Novel* \- /novel \[judul\] untuk info & baca novel\.\n\n` +
+                  `Pilih menu di bawah atau langsung kirim pesan\!`;
   
+  // Kirim pesan sambutan dengan Reply Keyboard
   bot.sendMessage(msg.chat.id, welcome, { 
-    parse_mode: "Markdown",
+    parse_mode: "MarkdownV2",
     reply_markup: {
-      inline_keyboard: [[{ text: "👨‍💻 Hubungi Admin", callback_data: "contact_admin" }]],
       keyboard: [["📊 Stats", "❓ Help", "🎮 Game"], ["🔍 Cari di Web", "📥 Download"], ["📚 Manga", "📖 Novel"]],
       resize_keyboard: true
+    }
+  });
+
+  // Kirim tombol Hubungi Admin secara terpisah (inline_keyboard)
+  bot.sendMessage(msg.chat.id, "💬 Ada pertanyaan atau kendala? Hubungi Admin kami:", {
+    reply_markup: {
+      inline_keyboard: [[{ text: "👨‍💻 Hubungi Admin", callback_data: "contact_admin" }]]
     }
   });
 });
