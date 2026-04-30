@@ -1,7 +1,7 @@
 from fastapi import FastAPI, Depends, HTTPException, Security
 from fastapi.security import APIKeyHeader
 from fastapi.staticfiles import StaticFiles
-from .routes import search_routes, download_routes, screenshot_routes, qr_routes
+from .routes import search_routes, download_routes, screenshot_routes, qr_routes, novel_reader_routes
 # from .routes import ai  # tambahkan jika ada ai router
 import os
 import uvicorn
@@ -25,6 +25,7 @@ app.include_router(search_routes.router, dependencies=[Depends(verify_api_key)])
 app.include_router(download_routes.router, dependencies=[Depends(verify_api_key)])
 app.include_router(screenshot_routes.router, dependencies=[Depends(verify_api_key)])
 app.include_router(qr_routes.router, dependencies=[Depends(verify_api_key)])
+app.include_router(novel_reader_routes.router, dependencies=[Depends(verify_api_key)])
 # app.include_router(ai.router, dependencies=[Depends(verify_api_key)])
 
 # Serve downloaded files via /files/ endpoint

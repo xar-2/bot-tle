@@ -209,6 +209,8 @@ bot.on("callback_query", (query) => {
       bot.answerCallbackQuery(query.id);
       gameHandler.handleSuit(bot, query);
     }
+  } else if (query.data.startsWith("read_novel|")) {
+    novelHandler.handleText(bot, query);
   }
 });
 

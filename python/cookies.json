@@ -1,0 +1,15 @@
+[
+    {
+        "domain": "sakuranovel.id",
+        "expirationDate": 1777670595,
+        "hostOnly": true,
+        "httpOnly": false,
+        "name": "cookieyes-consent",
+        "path": "/",
+        "sameSite": "strict",
+        "secure": false,
+        "session": false,
+        "storeId": null,
+        "value": "consentid:WmFhNnRMWVlFeEhkMWRJcW13R1pVckRPNHNhZERPclU,consent:no,action:,necessary:yes,functional:no,analytics:no,performance:no,advertisement:no"
+    }
+]

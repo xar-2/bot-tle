@@ -47,7 +47,8 @@ const novelHandler = {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📖 Mulai Membaca (Cari Sumber)", url: searchToRead }],
+            [{ text: "📖 Baca Teks Bot-tle", callback_data: `read_novel|${novel.url}` }],
+            [{ text: "🔍 Cari Sumber Lain", url: searchToRead }],
             [{ text: "🌐 Detail di MyAnimeList", url: novel.url }],
             [{ text: "❌ Tutup", callback_data: "cancel" }]
           ]
@@ -62,6 +63,34 @@ const novelHandler = {
     } catch (err) {
       console.error("Novel Search Error:", err.message);
       await bot.sendMessage(chatId, "❌ Terjadi kesalahan saat mencari novel.");
+    }
+  },
+
+  handleText: async (bot, query) => {
+    const url = query.data.split("|")[1];
+    const chatId = query.message.chat.id;
+
+    bot.answerCallbackQuery(query.id, { text: "📖 Menyiapkan bacaan..." });
+    const statusMsg = await bot.sendMessage(chatId, "🕵️ *Sedang menembus anti-bot dan mengambil teks...*", { parse_mode: "Markdown" });
+
+    try {
+      const result = await apiService.readNovel(url);
+      
+      const text = `📖 *${result.title}*\n` +
+                   `────────────────────\n\n` +
+                   `${result.content}\n\n` +
+                   `────────────────────\n` +
+                   `_Konten diekstrak otomatis oleh Bot-tle_`;
+
+      await bot.sendMessage(chatId, text, { parse_mode: "Markdown" });
+      await bot.deleteMessage(chatId, statusMsg.message_id);
+    } catch (err) {
+      console.error("Read Novel Error:", err.message);
+      await bot.editMessageText(`❌ *Gagal mengambil teks:* ${err.message}\n\n_Situs mungkin memblokir akses atau butuh cookies baru._`, {
+        chat_id: chatId,
+        message_id: statusMsg.message_id,
+        parse_mode: "Markdown"
+      });
     }
   }
 };

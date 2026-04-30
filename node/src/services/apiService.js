@@ -90,6 +90,17 @@ const apiService = {
       const detail = err.response?.data?.detail || err.message;
       throw new Error(detail);
     }
+  },
+
+  readNovel: async (url) => {
+    try {
+      const res = await api.get("/novel/read", { params: { url } });
+      return res.data;
+    } catch (err) {
+      console.error("Read Novel API Error:", err.message);
+      const detail = err.response?.data?.detail || err.message;
+      throw new Error(detail);
+    }
   }
 };
 
