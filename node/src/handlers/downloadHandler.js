@@ -12,11 +12,12 @@ const downloadHandler = {
 
     try {
       const info = await apiService.getDownloadInfo(url);
+      const mediaUrl = info.url || url; // Ambil URL asli hasil pencarian
 
       const inline_keyboard = [
         [
-          { text: "🎬 Video (Best)", callback_data: `dl|best|${url}` },
-          { text: "🎵 Audio (MP3)", callback_data: `dl|mp3|${url}` }
+          { text: "🎬 Video (Best)", callback_data: `dl|best|${mediaUrl}` },
+          { text: "🎵 Audio (MP3)", callback_data: `dl|mp3|${mediaUrl}` }
         ]
       ];
 

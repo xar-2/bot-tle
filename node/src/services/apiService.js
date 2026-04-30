@@ -45,7 +45,8 @@ const apiService = {
       return res.data;
     } catch (err) {
       console.error("Download Execute Error:", err.message);
-      throw new Error(`Gagal memproses download: ${err.message}`);
+      const detail = err.response?.data?.detail || err.message;
+      throw new Error(`Gagal memproses download: ${detail}`);
     }
   },
 
