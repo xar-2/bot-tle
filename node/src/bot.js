@@ -7,6 +7,7 @@ const adminHandler = require("./handlers/adminHandler");
 const screenshotHandler = require("./handlers/screenshotHandler");
 const qrHandler = require("./handlers/qrHandler");
 const gameHandler = require("./handlers/gameHandler");
+const mangaHandler = require("./handlers/mangaHandler");
 const chalk = require("chalk");
 
 const apiService = require("./services/apiService");
@@ -37,14 +38,15 @@ const startBot = () => {
                   `1️⃣ **Pencarian**: Cukup ketik apa saja, saya akan mencarinya di internet.\n` +
                   `2️⃣ **Download**: Kirim link (YouTube, IG, TikTok) untuk mendownload video/lagu.\n` +
                   `3️⃣ **Screenshot**: Ketik \`/ss [link]\` untuk memotret website.\n` +
-                  `4️⃣ **QR Code**: Ketik \`/qr [teks/link]\` untuk membuat barcode.\n\n` +
+                  `4️⃣ **QR Code**: Ketik \`/qr [teks/link]\` untuk membuat barcode.\n` +
+                  `5️⃣ **Manga**: Ketik \`/manga [judul]\` untuk info manga.\n\n` +
                   `Silakan pilih menu di bawah atau langsung kirim pesan!`;
   
   bot.sendMessage(msg.chat.id, welcome, { 
     parse_mode: "Markdown",
     reply_markup: {
       inline_keyboard: [[{ text: "👨‍💻 Hubungi Admin", callback_data: "contact_admin" }]],
-      keyboard: [["📊 Stats", "❓ Help", "🎮 Game"], ["🔍 Cari di Web", "📥 Download"]],
+      keyboard: [["📊 Stats", "❓ Help", "🎮 Game"], ["🔍 Cari di Web", "📥 Download", "📚 Manga"]],
       resize_keyboard: true
     }
   });
@@ -80,12 +82,17 @@ bot.onText(/\/game/, (msg) => {
   gameHandler.sendMenu(bot, msg);
 });
 
+bot.onText(/\/manga\s*(.*)/, (msg, match) => {
+  mangaHandler.handleSearch(bot, msg, match[1]);
+});
+
 // ─── Command: /help ───────────────────────────────────────────
 bot.onText(/\/help|❓ Help/, (msg) => {
   const help = `📖 *Panduan Bot-tle*\n\n` +
                `• *Web Search*: Cukup ketik kata kunci yang ingin dicari.\n` +
                `• *Screenshot*: \`/ss link-website\`.\n` +
                `• *QR Code*: \`/qr teks atau link\`.\n` +
+               `• *Manga*: \`/manga judul manga\`.\n` +
                `• *Download*: Paste link video/foto dari sosmed.\n` +
                `• /reset: Hapus riwayat pencarian kamu.\n` +
                `• /stats: Lihat statistik penggunaan kamu.\n\n` +
@@ -232,8 +239,9 @@ bot.on("message", (msg) => {
   userCooldowns.set(userId, now);
 
   // Keyboard mapping (Handled by onText regex now)
-  if (text === "📊 Stats" || text === "❓ Help" || text === "🎮 Game") {
+  if (text === "📊 Stats" || text === "❓ Help" || text === "🎮 Game" || text === "📚 Manga") {
     if (text === "🎮 Game") return gameHandler.sendMenu(bot, msg);
+    if (text === "📚 Manga") return bot.sendMessage(chatId, "📚 Silahkan ketikkan `/manga [judul]` untuk mencari informasi Manga atau Novel!");
     return;
   }
   
