@@ -11,12 +11,12 @@ const mangaHandler = {
     bot.sendChatAction(chatId, "typing");
 
     try {
-      // Menggunakan Jikan API (MyAnimeList)
-      const res = await axios.get(`https://api.jikan.moe/v4/manga?q=${encodeURIComponent(query)}&limit=5`);
+      // Menggunakan Jikan API (MyAnimeList) - Fokus ke Manga
+      const res = await axios.get(`https://api.jikan.moe/v4/manga?q=${encodeURIComponent(query)}&type=manga&limit=5`);
       const results = res.data.data;
 
       if (!results || results.length === 0) {
-        return bot.sendMessage(chatId, "❌ Manga/Novel tidak ditemukan.");
+        return bot.sendMessage(chatId, "❌ Manga tidak ditemukan.");
       }
 
       // Ambil hasil pertama yang paling relevan
