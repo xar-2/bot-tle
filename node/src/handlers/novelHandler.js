@@ -1,4 +1,8 @@
 const axios = require("axios");
+const apiService = require("../services/apiService");
+
+// Cache untuk menyimpan URL panjang agar tidak error BUTTON_DATA_INVALID
+const urlCache = new Map();
 
 const novelHandler = {
   handleSearch: async (bot, msg, query) => {
@@ -29,6 +33,10 @@ const novelHandler = {
       const authors = novel.authors.map(a => a.name).join(", ") || "N/A";
       const serialization = novel.serializations.map(s => s.name).join(", ") || "N/A";
       
+      // Simpan URL di cache agar data tombol tidak terlalu panjang
+      const cacheKey = `nvl_${novel.mal_id}`;
+      urlCache.set(cacheKey, novel.url);
+      
       const caption = `📖 *${novel.title}*\n` +
                       `🇯🇵 *${novel.title_japanese || "-"}*\n` +
                       `────────────────────\n` +
@@ -47,7 +55,7 @@ const novelHandler = {
         parse_mode: "Markdown",
         reply_markup: {
           inline_keyboard: [
-            [{ text: "📖 Baca Teks Bot-tle", callback_data: `read_novel|${novel.url}` }],
+            [{ text: "📖 Baca Teks Bot-tle", callback_data: `read_novel|${cacheKey}` }],
             [{ text: "🔍 Cari Sumber Lain", url: searchToRead }],
             [{ text: "🌐 Detail di MyAnimeList", url: novel.url }],
             [{ text: "❌ Tutup", callback_data: "cancel" }]
@@ -67,8 +75,13 @@ const novelHandler = {
   },
 
   handleText: async (bot, query) => {
-    const url = query.data.split("|")[1];
+    const cacheKey = query.data.split("|")[1];
+    const url = urlCache.get(cacheKey);
     const chatId = query.message.chat.id;
+
+    if (!url) {
+      return bot.answerCallbackQuery(query.id, { text: "❌ Sesi kadaluarsa, silakan cari ulang novelnya.", show_alert: true });
+    }
 
     bot.answerCallbackQuery(query.id, { text: "📖 Menyiapkan bacaan..." });
     const statusMsg = await bot.sendMessage(chatId, "🕵️ *Sedang menembus anti-bot dan mengambil teks...*", { parse_mode: "Markdown" });
