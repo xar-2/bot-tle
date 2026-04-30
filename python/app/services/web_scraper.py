@@ -1,8 +1,15 @@
 from playwright.async_api import async_playwright
-from playwright_stealth import stealth_async
 import os
 import json
 import asyncio
+
+# Gunakan stealth jika tersedia
+try:
+    from playwright_stealth import stealth_async
+    STEALTH_AVAILABLE = True
+except ImportError:
+    STEALTH_AVAILABLE = False
+    print("⚠️ playwright-stealth tidak tersedia, berjalan tanpa stealth mode")
 
 class WebScraperService:
     def __init__(self):
@@ -16,8 +23,9 @@ class WebScraperService:
             )
             
             page = await context.new_page()
-            # Aktifkan penyamaran agar tidak terdeteksi bot
-            await stealth_async(page)
+            # Aktifkan penyamaran jika tersedia
+            if STEALTH_AVAILABLE:
+                await stealth_async(page)
             
             # Gunakan cookies jika ada
             if os.path.exists(self.cookie_file):
