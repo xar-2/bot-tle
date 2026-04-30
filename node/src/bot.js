@@ -4,6 +4,7 @@ const dbService = require("./services/dbService");
 const searchHandler = require("./handlers/searchHandler");
 const downloadHandler = require("./handlers/downloadHandler");
 const adminHandler = require("./handlers/adminHandler");
+const screenshotHandler = require("./handlers/screenshotHandler");
 const chalk = require("chalk");
 
 const apiService = require("./services/apiService");
@@ -31,6 +32,7 @@ const startBot = () => {
   const welcome = `👋 Halo *${name}*!\n\n` +
                   `Saya adalah *Bot-tle*, asisten multifungsi kamu.\n\n` +
                   `🔍 *Web Search*: Ketik kata kunci untuk mencari di internet.\n` +
+                  `📸 *Screenshot*: Ketik \`/ss [url]\` untuk foto website.\n` +
                   `📥 *Downloader*: Kirim link YouTube/Instagram/TikTok.\n\n` +
                   `Gunakan /help untuk bantuan lebih lanjut.`;
   
@@ -47,6 +49,7 @@ const startBot = () => {
 bot.onText(/\/help|❓ Help/, (msg) => {
   const help = `📖 *Panduan Bot-tle*\n\n` +
                `• *Web Search*: Cukup ketik kata kunci yang ingin dicari.\n` +
+               `• *Screenshot*: \`/ss link-website\`.\n` +
                `• *Download*: Paste link video/foto dari sosmed.\n` +
                `• /reset: Hapus riwayat pencarian kamu.\n` +
                `• /stats: Lihat statistik penggunaan kamu.\n\n` +
@@ -70,6 +73,10 @@ bot.onText(/\/stats|📊 Stats/, (msg) => {
                `🔍 Pencarian: *${stats.messages}*\n` +
                `📅 Bergabung: ${new Date(stats.joined_at).toLocaleDateString("id-ID")}`;
   bot.sendMessage(msg.chat.id, text, { parse_mode: "Markdown" });
+});
+
+bot.onText(/\/ss\s*(.*)/, (msg, match) => {
+  screenshotHandler.handle(bot, msg, match[1]);
 });
 
 // ─── Admin Commands ───────────────────────────────────────────

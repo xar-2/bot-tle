@@ -68,6 +68,17 @@ const apiService = {
       console.error("Cancel Download Error:", err.message);
       return false;
     }
+  },
+
+  takeScreenshot: async (url) => {
+    try {
+      const res = await api.get("/screenshot", { params: { url } });
+      return res.data;
+    } catch (err) {
+      console.error("Screenshot API Error:", err.message);
+      const detail = err.response?.data?.detail || err.message;
+      throw new Error(detail);
+    }
   }
 };
 
