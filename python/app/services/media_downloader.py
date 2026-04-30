@@ -33,10 +33,27 @@ class MediaDownloader:
             'nocheckcertificate': True,
             'ignoreerrors': False,
             'addmetadata': True,
+            # Trik Bypass Bot Detection: Gunakan client Android
+            'extractor_args': {
+                'youtube': {
+                    'player_client': ['android', 'web'],
+                    'skip': ['dash', 'hls']
+                }
+            },
+            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
         }
         
-        if self.cookie_file:
-            opts['cookiefile'] = self.cookie_file
+        # Cari cookies.txt secara absolut
+        base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        cookie_paths = [
+            os.path.join(base_path, "cookies.txt"),
+            "cookies.txt"
+        ]
+        
+        for p in cookie_paths:
+            if os.path.exists(p):
+                opts['cookiefile'] = p
+                break
         
         if self.proxy:
             opts['proxy'] = self.proxy
