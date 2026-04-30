@@ -33,14 +33,15 @@ class MediaDownloader:
             'nocheckcertificate': True,
             'ignoreerrors': False,
             'addmetadata': True,
-            # Trik Bypass Bot Detection: Gunakan client Android
+            # Trik Bypass Bot Detection: Gunakan client Mobile & Embedded
             'extractor_args': {
                 'youtube': {
-                    'player_client': ['android', 'web'],
+                    'player_client': ['ios', 'android', 'web_embedded'],
                     'skip': ['dash', 'hls']
                 }
             },
-            'user_agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+            'user_agent': 'Mozilla/5.0 (iPhone; CPU iPhone OS 16_5 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.5 Mobile/15E148 Safari/604.1',
+            'noplaylist': True,
         }
         
         # Cari cookies.txt secara absolut
@@ -50,10 +51,16 @@ class MediaDownloader:
             "cookies.txt"
         ]
         
+        found_cookie = False
         for p in cookie_paths:
-            if os.path.exists(p):
+            if os.path.exists(p) and os.path.getsize(p) > 0:
                 opts['cookiefile'] = p
+                print(f"🍪 [SUCCESS] Loaded cookies from: {os.path.abspath(p)}")
+                found_cookie = True
                 break
+        
+        if not found_cookie:
+            print("⚠️ [WARNING] No cookies.txt found or file is empty!")
         
         if self.proxy:
             opts['proxy'] = self.proxy
