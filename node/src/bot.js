@@ -6,6 +6,7 @@ const downloadHandler = require("./handlers/downloadHandler");
 const adminHandler = require("./handlers/adminHandler");
 const screenshotHandler = require("./handlers/screenshotHandler");
 const qrHandler = require("./handlers/qrHandler");
+const gameHandler = require("./handlers/gameHandler");
 const chalk = require("chalk");
 
 const apiService = require("./services/apiService");
@@ -43,7 +44,7 @@ const startBot = () => {
     parse_mode: "Markdown",
     reply_markup: {
       inline_keyboard: [[{ text: "👨‍💻 Hubungi Admin", callback_data: "contact_admin" }]],
-      keyboard: [["📊 Stats", "❓ Help"], ["🔍 Cari di Web", "📥 Download"]],
+      keyboard: [["📊 Stats", "❓ Help", "🎮 Game"], ["🔍 Cari di Web", "📥 Download"]],
       resize_keyboard: true
     }
   });
@@ -73,6 +74,10 @@ bot.onText(/\/reply\s+(\d+)\s+(.*)/, (msg, match) => {
 
   bot.sendMessage(targetId, `📩 *PESAN DARI ADMIN:*\n\n${replyText}`, { parse_mode: "Markdown" });
   bot.sendMessage(msg.chat.id, `✅ Balasan terkirim ke \`${targetId}\``);
+});
+
+bot.onText(/\/game/, (msg) => {
+  gameHandler.sendMenu(bot, msg);
 });
 
 // ─── Command: /help ───────────────────────────────────────────
@@ -181,6 +186,15 @@ bot.on("callback_query", (query) => {
   } else if (query.data === "contact_admin") {
     bot.answerCallbackQuery(query.id);
     bot.sendMessage(query.message.chat.id, "👨‍💻 *Hubungi Admin*\n\nSilakan gunakan perintah:\n`/report [pesan kamu]`\n\nContoh: `/report Halo admin, saya ada kendala download`", { parse_mode: "Markdown" });
+  } else if (query.data.startsWith("game_")) {
+    if (query.data === "game_menu") {
+      bot.answerCallbackQuery(query.id);
+      bot.deleteMessage(query.message.chat.id, query.message.message_id);
+      gameHandler.sendMenu(bot, query.message);
+    } else {
+      bot.answerCallbackQuery(query.id);
+      gameHandler.handleSuit(bot, query);
+    }
   }
 });
 
@@ -218,7 +232,10 @@ bot.on("message", (msg) => {
   userCooldowns.set(userId, now);
 
   // Keyboard mapping (Handled by onText regex now)
-  if (text === "📊 Stats" || text === "❓ Help") return;
+  if (text === "📊 Stats" || text === "❓ Help" || text === "🎮 Game") {
+    if (text === "🎮 Game") return gameHandler.sendMenu(bot, msg);
+    return;
+  }
   
   if (text === "🔍 Cari di Web") return bot.sendMessage(chatId, "🔍 Silahkan ketikkan kata kunci yang ingin dicari di internet!");
   if (text === "📥 Download") return bot.sendMessage(chatId, "🔗 Silahkan kirimkan link media!");
