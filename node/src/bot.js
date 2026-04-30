@@ -30,7 +30,6 @@ const startBot = () => {
   
   const welcome = `👋 Halo *${name}*!\n\n` +
                   `Saya adalah *Bot-tle*, asisten multifungsi kamu.\n\n` +
-                  `🎵 *Cari Musik*: Ketik \`play [judul]\` atau \`lagu [judul]\`.\n` +
                   `🔍 *Web Search*: Ketik kata kunci untuk mencari di internet.\n` +
                   `📥 *Downloader*: Kirim link YouTube/Instagram/TikTok.\n\n` +
                   `Gunakan /help untuk bantuan lebih lanjut.`;
@@ -47,7 +46,6 @@ const startBot = () => {
 // ─── Command: /help ───────────────────────────────────────────
 bot.onText(/\/help|❓ Help/, (msg) => {
   const help = `📖 *Panduan Bot-tle*\n\n` +
-               `• *Cari Musik*: Ketik \`play judul lagu\` atau \`lagu judul lagu\`.\n` +
                `• *Web Search*: Cukup ketik kata kunci yang ingin dicari.\n` +
                `• *Download*: Paste link video/foto dari sosmed.\n` +
                `• /reset: Hapus riwayat pencarian kamu.\n` +
@@ -185,10 +183,6 @@ bot.on("message", (msg) => {
   
   if (isURL(text)) {
     downloadHandler.handleLink(bot, msg, text);
-  } else if (lowerText.startsWith("play ") || lowerText.startsWith("lagu ")) {
-    const query = text.replace(/^play /i, "").replace(/^lagu /i, "").trim();
-    const searchUrl = `ytsearch1:${query}`;
-    downloadHandler.handleLink(bot, msg, searchUrl);
   } else {
     searchHandler.handle(bot, msg, text);
   }
