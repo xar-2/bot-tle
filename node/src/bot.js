@@ -116,6 +116,28 @@ bot.on("callback_query", (query) => {
   } else if (query.data === "cancel") {
     bot.answerCallbackQuery(query.id, { text: "Dibatalkan" });
     bot.deleteMessage(query.message.chat.id, query.message.message_id);
+  } else if (query.data.startsWith("admin_")) {
+    // Security check for callback admin
+    if (!config.bot.adminIds.includes(query.from.id)) {
+      return bot.answerCallbackQuery(query.id, { text: "🚫 Akses Ditolak", show_alert: true });
+    }
+
+    const action = query.data.replace("admin_", "");
+    
+    if (action === "refresh") {
+      bot.answerCallbackQuery(query.id, { text: "🔄 Memperbarui data..." });
+      bot.deleteMessage(query.message.chat.id, query.message.message_id);
+      adminHandler.handleStats(bot, query.message);
+    } else if (action === "users") {
+      bot.answerCallbackQuery(query.id);
+      adminHandler.handleListUsers(bot, query.message);
+    } else if (action === "backup") {
+      bot.answerCallbackQuery(query.id, { text: "💾 Menyiapkan backup..." });
+      adminHandler.handleBackup(bot, query.message);
+    } else if (action === "bc") {
+      bot.answerCallbackQuery(query.id);
+      bot.sendMessage(query.message.chat.id, "📢 *Mode Broadcast*\n\nSilakan ketik perintah `/broadcast [pesan]` untuk mulai mengirim pesan.", { parse_mode: "Markdown" });
+    }
   }
 });
 

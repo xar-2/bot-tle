@@ -14,23 +14,37 @@ const adminHandler = {
     const m = Math.floor((uptime % 3600) / 60);
     const s = Math.floor(uptime % 60);
 
-    const report = `👑 *Panel Admin*\n\n` +
-                   `📊 *Statistik*\n` +
-                   `👥 Total Users: ${stats.users}\n` +
-                   `📥 Total Downloads: ${stats.downloads}\n` +
-                   `💬 Total AI Messages: ${stats.messages}\n\n` +
-                   `💻 *Sistem*\n` +
-                   `⏱ Uptime: ${h}h ${m}m ${s}s\n` +
-                   `💾 RAM: ${mem} MB\n` +
-                   `🐧 OS: ${os.platform()} ${os.release()}\n\n` +
-                   `📢 *Commands Admin:*\n` +
-                   `• \`/broadcast [pesan]\` - Kirim pesan ke semua\n` +
-                   `• \`/users\` - Lihat daftar user terbaru & ID\n` +
-                   `• \`/ban [id]\` - Blokir pengguna\n` +
-                   `• \`/unban [id]\` - Buka blokir pengguna\n` +
-                   `• \`/backup\` - Ambil backup database bot`;
+    const report = `👑 *ADMIN CONTROL PANEL*\n` +
+                   `────────────────────\n` +
+                   `📊 *STATISTIK BOT*\n` +
+                   `👥 Total Users: *${stats.users}*\n` +
+                   `📥 Downloads: *${stats.downloads}*\n` +
+                   `💬 Pesan AI: *${stats.messages}*\n\n` +
+                   `💻 *STATUS SERVER*\n` +
+                   `⏱ Uptime: \`${h}h ${m}m ${s}s\`\n` +
+                   `💾 RAM: \`${mem} MB\`\n` +
+                   `🐧 OS: \`${os.platform()} ${os.release()}\`\n` +
+                   `────────────────────\n` +
+                   `Pilih menu di bawah untuk mengontrol bot:`;
 
-    await bot.sendMessage(msg.chat.id, report, { parse_mode: "Markdown" });
+    const opts = {
+      parse_mode: "Markdown",
+      reply_markup: {
+        inline_keyboard: [
+          [
+            { text: "📢 Broadcast", callback_data: "admin_bc" },
+            { text: "👥 List Users", callback_data: "admin_users" }
+          ],
+          [
+            { text: "💾 Backup DB", callback_data: "admin_backup" },
+            { text: "🔄 Refresh", callback_data: "admin_refresh" }
+          ],
+          [{ text: "❌ Tutup Panel", callback_data: "cancel" }]
+        ]
+      }
+    };
+
+    await bot.sendMessage(msg.chat.id, report, opts);
   },
 
   handleBroadcast: async (bot, msg, text) => {
