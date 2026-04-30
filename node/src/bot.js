@@ -218,6 +218,10 @@ bot.on("callback_query", (query) => {
     }
   } else if (query.data.startsWith("read_novel|")) {
     novelHandler.handleText(bot, query);
+  } else if (query.data.startsWith("novel_page|")) {
+    novelHandler.handlePage(bot, query);
+  } else if (query.data === "noop") {
+    bot.answerCallbackQuery(query.id); // Tombol info halaman, tidak melakukan apa-apa
   }
 });
 
